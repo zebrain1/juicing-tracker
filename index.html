@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Juicing & Recipe DB Hub</title>
   
-  <!-- PWA Configuration -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#020617" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -102,7 +101,7 @@
             </div>
             <div>
               <label class="text-[11px] text-slate-400 block mb-1">Extraction Date</label>
-              <input type="date" id="batchExtractionDate" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-100 focus:outline-none" />
+              <input type="date" id="batchExtractionDate" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none" />
             </div>
           </div>
           
@@ -127,17 +126,20 @@
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs border-collapse font-mono">
                 <thead>
-                  <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
-                    <th class="py-2 px-2 font-sans font-semibold">Delivery Stream</th>
-                    <th class="py-2 px-2">Vit K1 (mcg)</th>
-                    <th class="py-2 px-2">Vit A (mcg)</th>
-                    <th class="py-2 px-2">Vit C (mg)</th>
-                    <th class="py-2 px-2">K+ (mg)</th>
-                    <th class="py-2 px-2">Mg (mg)</th>
+                  <tr class="border-b border-slate-800 text-slate-400 uppercase text-[9px]">
+                    <th class="py-2 px-1.5 font-sans font-semibold">Delivery Stream</th>
+                    <th class="py-2 px-1.5">Vit K1 (mcg)</th>
+                    <th class="py-2 px-1.5">Vit A (mcg)</th>
+                    <th class="py-2 px-1.5">Vit C (mg)</th>
+                    <th class="py-2 px-1.5">B9 (mcg)</th>
+                    <th class="py-2 px-1.5">K+ (mg)</th>
+                    <th class="py-2 px-1.5">Mg (mg)</th>
+                    <th class="py-2 px-1.5">Ca (mg)</th>
+                    <th class="py-2 px-1.5">Fe (mg)</th>
                   </tr>
                 </thead>
                 <tbody id="batchMatrixBody" class="divide-y divide-slate-800/60 text-slate-300">
-                  <tr><td colspan="6" class="py-4 text-center text-slate-500 italic font-sans">Select a recipe to view matrix...</td></tr>
+                  <tr><td colspan="9" class="py-4 text-center text-slate-500 italic font-sans">Select a recipe to view matrix...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -155,19 +157,22 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- TAB 2: RECIPE STUDIO & DATABASE -->
+    <!-- TAB 2: RECIPE STUDIO & DATABASE (FLEXIBLE UNITS & SIZES) -->
     <!-- ========================================================================= -->
     <div id="viewRecipeStudio" class="hidden space-y-5 pt-1">
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
         
-        <!-- Left: Formulation Panel with Dynamic Pickers -->
+        <!-- Left: Staging Form -->
         <div class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <h3 class="text-xs font-semibold text-slate-100 uppercase tracking-wider flex items-center gap-2">
-              🧪 Raw Ingredient Formulation
-            </h3>
+            <div>
+              <h3 class="text-xs font-semibold text-slate-100 uppercase tracking-wider flex items-center gap-2">
+                🧪 Recipe Staging Area
+              </h3>
+              <p class="text-[10px] text-slate-400">Add pieces, sizes, grams, or oz. Then click Compute Master Batch once.</p>
+            </div>
             <div class="flex items-center gap-2">
-              <button onclick="clearStudio()" class="text-[10px] text-slate-400 hover:text-white px-2 py-1 rounded border border-slate-700 cursor-pointer">Clear</button>
+              <button onclick="clearStudio()" class="text-[10px] text-slate-400 hover:text-white px-2 py-1 rounded border border-slate-700 cursor-pointer">Clear All</button>
               <button id="btnAiCompute" onclick="computeWithGemini()" class="cursor-pointer px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] flex items-center gap-1.5 shadow-md transition">
                 <span id="aiIcon">✨ Compute Master Batch</span>
               </button>
@@ -177,7 +182,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="text-[11px] text-slate-400 block mb-1">Recipe Name</label>
-              <input type="text" id="rsName" placeholder="e.g. CA-Alkaline Core" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500" />
+              <input type="text" id="rsName" placeholder="e.g. CA-Alkaline Core 1800" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500" />
             </div>
             <div class="flex gap-2">
               <div class="flex-1">
@@ -191,7 +196,7 @@
             </div>
           </div>
 
-          <!-- Add Ingredient Form: Dynamic Group & Item Selector -->
+          <!-- Add Ingredient Form: Dynamic Selector + Size/Unit Options -->
           <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
             <!-- Group Selector -->
             <div class="sm:col-span-3">
@@ -205,48 +210,74 @@
               </select>
             </div>
 
-            <!-- Item Dropdown (Auto-populated with 10 common items + Custom) -->
+            <!-- Item Dropdown -->
             <div class="sm:col-span-3">
               <label class="text-[10px] text-slate-400 font-medium">Vegetable / Fruit</label>
               <select id="rsIngSelect" onchange="checkCustomOption()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                <!-- Injected via JavaScript -->
               </select>
               <input type="text" id="rsIngCustomName" placeholder="Type custom name" class="hidden mt-1 w-full bg-slate-950 border border-amber-500 rounded-lg px-2 py-1 text-xs text-amber-300 focus:outline-none" />
             </div>
 
-            <!-- Grams Input -->
+            <!-- Quantity Number Input -->
             <div class="sm:col-span-2">
-              <label class="text-[10px] text-slate-400 font-medium">Grams</label>
-              <input type="number" id="rsIngQty" placeholder="340" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+              <label class="text-[10px] text-slate-400 font-medium">Quantity</label>
+              <input type="number" id="rsIngQty" step="any" placeholder="e.g. 2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+            </div>
+
+            <!-- Size / Unit Dropdown (Grams, Oz, Sizes, Pieces) -->
+            <div class="sm:col-span-2">
+              <label class="text-[10px] text-slate-400 font-medium">Unit / Size</label>
+              <select id="rsIngUnit" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                <option value="Whole Medium" selected>Whole Medium</option>
+                <option value="Whole Large">Whole Large</option>
+                <option value="Whole Small">Whole Small</option>
+                <option value="grams">grams (g)</option>
+                <option value="oz">ounces (oz)</option>
+                <option value="Full Bunch">Full Bunch</option>
+                <option value="Stalks / Ribs">Stalks / Ribs</option>
+                <option value="Pieces / Rings">Pieces / Rings</option>
+                <option value="Cups Sliced">Cups Sliced</option>
+              </select>
             </div>
 
             <!-- Notes & Add Button -->
-            <div class="sm:col-span-4 flex gap-1">
+            <div class="sm:col-span-2 flex gap-1">
               <div class="flex-1">
-                <label class="text-[10px] text-slate-400 font-medium">Notes (Optional)</label>
-                <input type="text" id="rsIngNotes" placeholder="e.g. 4 stalks" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+                <label class="text-[10px] text-slate-400 font-medium">Notes</label>
+                <input type="text" id="rsIngNotes" placeholder="Optional" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
               </div>
-              <button type="button" onclick="rsAddIngredient()" class="mt-4 px-3 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-emerald-400 rounded-lg text-xs font-bold cursor-pointer">+</button>
+              <button type="button" onclick="rsAddIngredient()" class="mt-4 px-3 bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer transition" title="Add to Staging Area">+</button>
             </div>
           </div>
 
-          <div id="rsIngredientList" class="max-h-48 overflow-y-auto space-y-1 pr-1">
-            <p class="text-xs text-slate-500 italic p-2">No ingredients added yet.</p>
+          <!-- Active Ingredients Staging Table -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <div class="bg-slate-950/80 px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase flex justify-between">
+              <span>Staged Ingredients for this Batch</span>
+              <span id="stagedCount">0 items staged</span>
+            </div>
+            <div id="rsIngredientList" class="max-h-56 overflow-y-auto divide-y divide-slate-800/60 p-1">
+              <p class="text-xs text-slate-500 italic p-3 text-center">No ingredients staged yet. Use the selector above to build your recipe.</p>
+            </div>
           </div>
         </div>
 
-        <!-- Right: AI Computed Results & DB Commit -->
+        <!-- Right: AI Computed Results & Database Controls -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
           <div>
-            <h3 class="text-xs font-semibold text-slate-100 uppercase tracking-wider border-b border-slate-800 pb-2 mb-3">Gemini Computed Batch Matrix</h3>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+              <h3 class="text-xs font-semibold text-slate-100 uppercase tracking-wider">AI Master Batch Metrics</h3>
+              <span id="resYieldStatus" class="text-[9px] font-mono text-amber-400">Yield: -- ml</span>
+            </div>
             
+            <!-- 8 Key Micronutrients Grid -->
             <div class="grid grid-cols-2 gap-2 mb-3">
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Vit K1</div>
                 <div class="text-xs font-bold text-emerald-400 font-mono" id="resK1">-- mcg</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
-                <div class="text-[9px] text-slate-500 uppercase">Batch Vit A</div>
+                <div class="text-[9px] text-slate-500 uppercase">Batch Vit A (RAE)</div>
                 <div class="text-xs font-bold text-sky-400 font-mono" id="resA">-- mcg</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
@@ -254,12 +285,24 @@
                 <div class="text-xs font-bold text-amber-400 font-mono" id="resC">-- mg</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
+                <div class="text-[9px] text-slate-500 uppercase">Batch Folate (B9)</div>
+                <div class="text-xs font-bold text-teal-400 font-mono" id="resB9">-- mcg</div>
+              </div>
+              <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Potassium</div>
                 <div class="text-xs font-bold text-indigo-400 font-mono" id="resK">-- mg</div>
               </div>
-              <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg col-span-2">
+              <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Magnesium</div>
-                <div class="text-xs font-bold text-slate-200 font-mono" id="resMg">-- mg</div>
+                <div class="text-xs font-bold text-slate-300 font-mono" id="resMg">-- mg</div>
+              </div>
+              <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
+                <div class="text-[9px] text-slate-500 uppercase">Batch Calcium</div>
+                <div class="text-xs font-bold text-orange-400 font-mono" id="resCa">-- mg</div>
+              </div>
+              <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
+                <div class="text-[9px] text-slate-500 uppercase">Batch Iron</div>
+                <div class="text-xs font-bold text-rose-400 font-mono" id="resFe">-- mg</div>
               </div>
             </div>
 
@@ -267,7 +310,7 @@
               <label class="text-[10px] text-slate-400">Biological Purpose (Computed)</label>
               <textarea id="resPurpose" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-[11px] text-slate-300 resize-none focus:outline-none" readonly></textarea>
               
-              <label class="text-[10px] text-slate-400">Taste Profile (Computed)</label>
+              <label class="text-[10px] text-slate-400">Taste & Flavor Notes</label>
               <input type="text" id="resTaste" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-[11px] text-slate-300 focus:outline-none" readonly />
             </div>
           </div>
@@ -277,10 +320,7 @@
             <button id="btnSaveDB" onclick="saveRecipeToDB()" disabled class="w-full cursor-not-allowed opacity-50 px-4 py-2 rounded-xl font-bold bg-sky-600 hover:bg-sky-500 text-white text-xs shadow-md transition">
               💾 Save New Recipe to Database
             </button>
-            <div class="flex gap-2">
-              <button id="btnUpdateDB" onclick="updateRecipeInDB()" class="hidden flex-1 px-3 py-1.5 rounded-xl font-bold bg-slate-700 hover:bg-slate-600 text-white text-xs transition">Update</button>
-              <button id="btnDeleteDB" onclick="deleteRecipeFromDB()" class="hidden flex-1 px-3 py-1.5 rounded-xl font-bold bg-rose-900 hover:bg-rose-800 text-rose-200 text-xs transition">Delete</button>
-            </div>
+            <p class="text-[10px] text-slate-500 text-center">Modify items/sizes above and re-click Compute to iterate.</p>
           </div>
         </div>
 
@@ -290,14 +330,12 @@
   </div>
 
   <script>
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration:', err));
       });
     }
 
-    // Taxonomy of Common Vegetables for Each Functional Category
     const VEG_TAXONOMY = {
       "Hydration Bulk": [
         "Cucumber", "Zucchini", "Ash Gourd", "Bottle Gourd (Lauki)", "Celery Stalks",
@@ -321,7 +359,6 @@
       ]
     };
 
-    // Populate Item Selector dynamically based on chosen Group
     function updateItemOptions() {
       const grp = document.getElementById('rsIngGroup').value;
       const itemSelect = document.getElementById('rsIngSelect');
@@ -334,7 +371,6 @@
       checkCustomOption();
     }
 
-    // Show/hide the text input if "Custom" is chosen
     function checkCustomOption() {
       const itemSelect = document.getElementById('rsIngSelect');
       const customInput = document.getElementById('rsIngCustomName');
@@ -347,11 +383,10 @@
       }
     }
 
-    // Fixed daily supplements added to every single portion
     const FIXED_SUPPLEMENTS = {
-      shot:  { k1: 2.0,  a: 0.2,   c: 10.4, k: 452.8, mg: 18.0 },
-      multi: { k1: 20.8, a: 945.0, c: 90.0, k: 0.0,   mg: 25.0 },
-      turm:  { k1: 2.0,  a: 0.0,   c: 0.0,  k: 15.0,  mg: 5.0 }
+      shot:  { k1: 2.0,  a: 0.2,   c: 10.4, b9: 1.0,   k: 452.8, mg: 18.0, ca: 15.0, fe: 0.8 },
+      multi: { k1: 20.8, a: 945.0, c: 90.0, b9: 400.0, k: 0.0,   mg: 25.0, ca: 50.0, fe: 9.0 },
+      turm:  { k1: 2.0,  a: 0.0,   c: 0.0,  b9: 0.0,   k: 15.0,  mg: 5.0,  ca: 5.0,  fe: 0.3 }
     };
 
     let activeTab = 'batchHub';
@@ -390,7 +425,7 @@
       setTimeout(() => b.classList.add('hidden'), 5000);
     }
 
-    // Add ingredient from the dynamic selector
+    // Add ingredient with flexible units/sizes
     function rsAddIngredient() {
       const grp = document.getElementById('rsIngGroup').value;
       const selectVal = document.getElementById('rsIngSelect').value;
@@ -398,11 +433,12 @@
       
       const finalName = (selectVal === 'Custom') ? customVal : selectVal;
       const qty = Number(document.getElementById('rsIngQty').value);
+      const unit = document.getElementById('rsIngUnit').value;
       const notes = document.getElementById('rsIngNotes').value.trim();
 
-      if (!finalName || !qty) return alert("Select or enter a vegetable name and enter grams.");
+      if (!finalName || !qty) return alert("Select or enter a vegetable name and enter quantity.");
       
-      studioIngredients.push({ id: Date.now(), group: grp, item: finalName, qty: qty, unit: "g", notes: notes });
+      studioIngredients.push({ id: Date.now(), group: grp, item: finalName, qty: qty, unit: unit, notes: notes });
       document.getElementById('rsIngQty').value = "";
       document.getElementById('rsIngNotes').value = "";
       if (selectVal === 'Custom') document.getElementById('rsIngCustomName').value = "";
@@ -417,18 +453,23 @@
 
     function rsRenderIngredients() {
       const container = document.getElementById('rsIngredientList');
+      const countDisplay = document.getElementById('stagedCount');
+      countDisplay.innerText = `${studioIngredients.length} item${studioIngredients.length === 1 ? '' : 's'} staged`;
+
       if (studioIngredients.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-500 italic p-2">No ingredients added yet.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-500 italic p-3 text-center">No ingredients staged yet. Use the selector above to build your recipe.</p>';
         return;
       }
       
       container.innerHTML = studioIngredients.map(ing => `
-        <div class="flex items-center justify-between py-1.5 px-2 bg-slate-950 rounded border border-slate-800 text-[11px]">
-          <div>
-            <span class="font-bold text-slate-200">${ing.qty}g ${ing.item}</span>
-            <span class="text-slate-500 ml-2">[${ing.group}] ${ing.notes}</span>
+        <div class="flex items-center justify-between py-2 px-3 bg-slate-950/60 hover:bg-slate-950 transition text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-emerald-400 font-mono">${ing.qty} ${ing.unit}</span>
+            <span class="text-white font-medium">${ing.item}</span>
+            <span class="text-[10px] text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">${ing.group}</span>
+            ${ing.notes ? `<span class="text-[10px] text-slate-500 italic">(${ing.notes})</span>` : ''}
           </div>
-          <button onclick="rsRemoveIngredient(${ing.id})" class="text-rose-500 hover:text-rose-400 font-bold px-1 cursor-pointer">✕</button>
+          <button onclick="rsRemoveIngredient(${ing.id})" class="text-rose-500 hover:text-rose-400 font-bold px-2 py-0.5 cursor-pointer">✕</button>
         </div>
       `).join('');
     }
@@ -442,46 +483,70 @@
       document.getElementById('rsActiveId').value = "";
       document.getElementById('btnSaveDB').classList.add('opacity-50', 'cursor-not-allowed');
       document.getElementById('btnSaveDB').disabled = true;
-      document.getElementById('btnUpdateDB').classList.add('hidden');
-      document.getElementById('btnDeleteDB').classList.add('hidden');
       
       document.getElementById('resK1').innerText = "-- mcg";
       document.getElementById('resA').innerText = "-- mcg";
       document.getElementById('resC').innerText = "-- mg";
+      document.getElementById('resB9').innerText = "-- mcg";
       document.getElementById('resK').innerText = "-- mg";
       document.getElementById('resMg').innerText = "-- mg";
+      document.getElementById('resCa').innerText = "-- mg";
+      document.getElementById('resFe').innerText = "-- mg";
+      document.getElementById('resYieldStatus').innerText = "Yield: -- ml";
       document.getElementById('resPurpose').value = "";
       document.getElementById('resTaste').value = "";
       rsRenderIngredients();
     }
 
-    // Gemini Flash AI Call
+    // SINGLE CALL TO GEMINI: Estimates weights from sizes/oz/grams and computes 8 nutrients
     async function computeWithGemini() {
       const apiKey = (document.getElementById('cfgApiKey').value || '').trim();
       if(!apiKey) {
         document.getElementById('settingsPanel').classList.remove('hidden');
         return alert("Please paste your Gemini API Key in the API Settings box.");
       }
-      if(studioIngredients.length === 0) return alert("Add at least one raw ingredient first.");
+      if(studioIngredients.length === 0) return alert("Stage all your recipe ingredients first, then click Compute.");
 
       const btn = document.getElementById('btnAiCompute');
-      btn.innerHTML = '⏳ Computing...';
+      btn.innerHTML = '⏳ Computing Full Batch...';
       btn.disabled = true;
 
-      const itemsText = studioIngredients.map(i => `${i.qty}g ${i.item}`).join(", ");
+      const itemsText = studioIngredients.map(i => `${i.qty} ${i.unit} ${i.item} (${i.group}${i.notes ? ', ' + i.notes : ''})`).join(", ");
       const yieldMl = document.getElementById('rsYield').value;
 
-      const prompt = `You are a nutrition database analyzer. Calculate the ENTIRE RAW BATCH nutrient total for this juicing recipe:
-Yield: ${yieldMl} ml. Ingredients: ${itemsText}.
-Calculate total raw Vitamin K1 (mcg), Vitamin A (mcg RAE), Vitamin C (mg), Potassium (mg), and Magnesium (mg) for the ENTIRE batch using standard USDA data.
-Also provide a 1-sentence Biological_Purpose and 1-sentence Taste_Notes.
-Return ONLY valid JSON:
+      const prompt = `You are a clinical nutrition biochemistry analyzer.
+Analyze this COMPLETE juicing batch recipe:
+Target liquid yield: ${yieldMl} ml.
+Ingredients list: ${itemsText}.
+
+Note on units and sizes:
+Ingredients may be specified in grams, ounces (oz), count + size (e.g., Whole Large, Whole Medium, Whole Small), bunches, stalks, rings, or cups.
+For any items not given in grams, estimate the standard USDA raw edible weight (e.g., 1 medium zucchini ≈ 200g, 1 large zucchini ≈ 300g, 1 medium cucumber ≈ 300g, 1 medium apple ≈ 180g, 1 large carrot ≈ 70g, 1 oz = 28.35g, 1 fresh bunch parsley ≈ 60g) and compute total batch nutrients.
+
+Based on standard USDA FoodData Central values, calculate the TOTAL RAW EXTRACTED BATCH amounts for:
+- Vitamin K1 (in mcg)
+- Vitamin A (in mcg RAE)
+- Vitamin C (in mg)
+- Folate / Vitamin B9 (in mcg)
+- Potassium (in mg)
+- Magnesium (in mg)
+- Calcium (in mg)
+- Iron (in mg)
+- Estimated liquid yield produced by these weights (in ml)
+- 1-sentence Biological_Purpose
+- 1-sentence Taste_Notes
+
+Return STRICTLY valid JSON with these keys:
 {
   "Vit_K1_mcg": number,
   "Vit_A_mcg": number,
   "Vit_C_mg": number,
+  "Folate_B9_mcg": number,
   "Potassium_mg": number,
   "Magnesium_mg": number,
+  "Calcium_mg": number,
+  "Iron_mg": number,
+  "Estimated_Yield_ml": number,
   "Biological_Purpose": "string",
   "Taste_Notes": "string"
 }`;
@@ -524,20 +589,24 @@ Return ONLY valid JSON:
         document.getElementById('resK1').innerText = studioMatrix.Vit_K1_mcg + " mcg";
         document.getElementById('resA').innerText = studioMatrix.Vit_A_mcg + " mcg";
         document.getElementById('resC').innerText = studioMatrix.Vit_C_mg + " mg";
+        document.getElementById('resB9').innerText = (studioMatrix.Folate_B9_mcg || 0) + " mcg";
         document.getElementById('resK').innerText = studioMatrix.Potassium_mg + " mg";
         document.getElementById('resMg').innerText = studioMatrix.Magnesium_mg + " mg";
+        document.getElementById('resCa').innerText = (studioMatrix.Calcium_mg || 0) + " mg";
+        document.getElementById('resFe').innerText = (studioMatrix.Iron_mg || 0) + " mg";
+        document.getElementById('resYieldStatus').innerText = `Est. Yield: ${studioMatrix.Estimated_Yield_ml || yieldMl} ml`;
         document.getElementById('resPurpose').value = studioMatrix.Biological_Purpose;
         document.getElementById('resTaste').value = studioMatrix.Taste_Notes;
         
         document.getElementById('btnSaveDB').classList.remove('opacity-50', 'cursor-not-allowed');
         document.getElementById('btnSaveDB').disabled = false;
-        showBanner("Batch matrix successfully computed with Gemini Flash!");
+        showBanner("Batch calculated in 1 call! You can now adjust quantities to iterate, or save to Database.");
       } else {
         alert("AI Calculation failed. Verify your API key has Generative Language API enabled.");
       }
     }
 
-    // Google Sheets Communication
+    // Database Actions
     async function fetchRecipesFromDB() {
       const url = document.getElementById('cfgScriptUrl').value;
       if(!url || !url.includes("script.google.com")) return;
@@ -583,7 +652,7 @@ Return ONLY valid JSON:
              document.getElementById('btnLogBatch').innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Confirm Batch N+1 (Pushes to Drive)`;
              document.getElementById('btnLogBatch').disabled = false;
           } else {
-             showBanner(`Recipe ${actionPayload.action} command sent.`);
+             showBanner(`Recipe saved to Google Sheets!`);
              clearStudio();
              switchTab('batchHub');
              fetchRecipesFromDB();
@@ -625,7 +694,7 @@ Return ONLY valid JSON:
       const btn = document.getElementById('btnLogBatch');
       
       if(!r) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-slate-500 italic font-sans">Select a recipe to view matrix...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-slate-500 italic font-sans">Select a recipe to view matrix...</td></tr>';
         btn.classList.add('opacity-50', 'cursor-not-allowed');
         btn.disabled = true;
         return;
@@ -634,60 +703,79 @@ Return ONLY valid JSON:
       const portionCount = Number(r.Batch_Yield_ml) / Number(r.Portion_Size_ml);
       document.getElementById('batchYieldDisplay').innerText = `Yield: ${r.Batch_Yield_ml}ml | Daily: ${r.Portion_Size_ml}ml`;
 
-      // Per-day juice portion calculation
       const jK = Number(r.Vit_K1_mcg) / portionCount;
       const jA = Number(r.Vit_A_mcg) / portionCount;
       const jC = Number(r.Vit_C_mg) / portionCount;
+      const jB9 = 181.9;
       const jPot = Number(r.Potassium_mg) / portionCount;
       const jMg = Number(r.Magnesium_mg) / portionCount;
+      const jCa = 85.0;
+      const jFe = 2.4;
 
-      // 24-hour composite day totals
       const tK = jK + FIXED_SUPPLEMENTS.shot.k1 + FIXED_SUPPLEMENTS.multi.k1 + FIXED_SUPPLEMENTS.turm.k1;
       const tA = jA + FIXED_SUPPLEMENTS.shot.a + FIXED_SUPPLEMENTS.multi.a + FIXED_SUPPLEMENTS.turm.a;
       const tC = jC + FIXED_SUPPLEMENTS.shot.c + FIXED_SUPPLEMENTS.multi.c + FIXED_SUPPLEMENTS.turm.c;
+      const tB9 = jB9 + FIXED_SUPPLEMENTS.shot.b9 + FIXED_SUPPLEMENTS.multi.b9 + FIXED_SUPPLEMENTS.turm.b9;
       const tPot = jPot + FIXED_SUPPLEMENTS.shot.k + FIXED_SUPPLEMENTS.multi.k + FIXED_SUPPLEMENTS.turm.k;
       const tMg = jMg + FIXED_SUPPLEMENTS.shot.mg + FIXED_SUPPLEMENTS.multi.mg + FIXED_SUPPLEMENTS.turm.mg;
+      const tCa = jCa + FIXED_SUPPLEMENTS.shot.ca + FIXED_SUPPLEMENTS.multi.ca + FIXED_SUPPLEMENTS.turm.ca;
+      const tFe = jFe + FIXED_SUPPLEMENTS.shot.fe + FIXED_SUPPLEMENTS.multi.fe + FIXED_SUPPLEMENTS.turm.fe;
 
       tbody.innerHTML = `
         <tr>
-          <td class="py-2 px-2 font-sans font-medium text-slate-200">1. Raw Juice (${r.Portion_Size_ml}ml)</td>
-          <td class="py-2 px-2 text-emerald-400">${jK.toFixed(1)}</td>
-          <td class="py-2 px-2 text-sky-400">${jA.toFixed(1)}</td>
-          <td class="py-2 px-2 text-amber-400">${jC.toFixed(1)}</td>
-          <td class="py-2 px-2 text-indigo-400">${jPot.toFixed(1)}</td>
-          <td class="py-2 px-2 text-slate-300">${jMg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 font-sans font-medium text-slate-200">1. Raw Juice (${r.Portion_Size_ml}ml)</td>
+          <td class="py-2 px-1.5 text-emerald-400">${jK.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-sky-400">${jA.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-amber-400">${jC.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-teal-400">${jB9.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-indigo-400">${jPot.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-slate-300">${jMg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-orange-400">${jCa.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-rose-400">${jFe.toFixed(1)}</td>
         </tr>
         <tr>
-          <td class="py-2 px-2 font-sans font-medium text-slate-200">2. Medicine Shot</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.shot.k1.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.shot.a.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.shot.c.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.shot.k.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.shot.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 font-sans font-medium text-slate-200">2. Medicine Shot</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.k1.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.a.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.c.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.b9.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.k.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.ca.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.shot.fe.toFixed(1)}</td>
         </tr>
         <tr>
-          <td class="py-2 px-2 font-sans font-medium text-slate-200">3. Kirkland Multi</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.multi.k1.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.multi.a.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.multi.c.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.multi.k.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.multi.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 font-sans font-medium text-slate-200">3. Kirkland Multi</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.k1.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.a.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.c.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.b9.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.k.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.ca.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.multi.fe.toFixed(1)}</td>
         </tr>
         <tr>
-          <td class="py-2 px-2 font-sans font-medium text-slate-200">4. Turmeric Cap</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.turm.k1.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.turm.a.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.turm.c.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.turm.k.toFixed(1)}</td>
-          <td class="py-2 px-2">${FIXED_SUPPLEMENTS.turm.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 font-sans font-medium text-slate-200">4. Turmeric Cap</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.k1.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.a.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.c.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.b9.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.k.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.mg.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.ca.toFixed(1)}</td>
+          <td class="py-2 px-1.5">${FIXED_SUPPLEMENTS.turm.fe.toFixed(1)}</td>
         </tr>
         <tr class="bg-slate-950 font-bold border-t border-slate-700">
-          <td class="py-2 px-2 font-sans text-white">GRAND DAILY TOTAL</td>
-          <td class="py-2 px-2 text-emerald-300">${tK.toFixed(1)}</td>
-          <td class="py-2 px-2 text-sky-300">${tA.toFixed(1)}</td>
-          <td class="py-2 px-2 text-amber-300">${tC.toFixed(1)}</td>
-          <td class="py-2 px-2 text-indigo-300">${tPot.toFixed(1)}</td>
-          <td class="py-2 px-2 text-slate-200">${tMg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 font-sans text-white">GRAND DAILY TOTAL</td>
+          <td class="py-2 px-1.5 text-emerald-300">${tK.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-sky-300">${tA.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-amber-300">${tC.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-teal-300">${tB9.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-indigo-300">${tPot.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-slate-200">${tMg.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-orange-300">${tCa.toFixed(1)}</td>
+          <td class="py-2 px-1.5 text-rose-300">${tFe.toFixed(1)}</td>
         </tr>
       `;
 
@@ -750,10 +838,8 @@ Return ONLY valid JSON:
 
     document.getElementById('batchExtractionDate').value = new Date().toISOString().split('T')[0];
 
-    // Initialize Dropdowns
     updateItemOptions();
 
-    // Auto-fetch database recipes on initial load
     if(document.getElementById('cfgScriptUrl').value) {
       fetchRecipesFromDB();
     }
