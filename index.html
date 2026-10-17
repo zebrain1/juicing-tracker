@@ -160,14 +160,14 @@
     <div id="viewRecipeStudio" class="hidden space-y-5 pt-1">
       <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
         
-        <!-- Left: Formulation Panel -->
+        <!-- Left: Formulation Panel with Dynamic Pickers -->
         <div class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2">
             <h3 class="text-xs font-semibold text-slate-100 uppercase tracking-wider flex items-center gap-2">
               🧪 Raw Ingredient Formulation
             </h3>
             <div class="flex items-center gap-2">
-              <button onclick="clearStudio()" class="text-[10px] text-slate-400 hover:text-white px-2 py-1 rounded border border-slate-700">Clear</button>
+              <button onclick="clearStudio()" class="text-[10px] text-slate-400 hover:text-white px-2 py-1 rounded border border-slate-700 cursor-pointer">Clear</button>
               <button id="btnAiCompute" onclick="computeWithGemini()" class="cursor-pointer px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] flex items-center gap-1.5 shadow-md transition">
                 <span id="aiIcon">✨ Compute Master Batch</span>
               </button>
@@ -191,34 +191,42 @@
             </div>
           </div>
 
-          <!-- Add Ingredient Form -->
+          <!-- Add Ingredient Form: Dynamic Group & Item Selector -->
           <div class="p-3 bg-slate-950/70 border border-slate-800 rounded-xl grid grid-cols-1 sm:grid-cols-12 gap-2 items-end">
+            <!-- Group Selector -->
             <div class="sm:col-span-3">
-              <label class="text-[10px] text-slate-400">Vegetable Group</label>
-              <select id="rsIngGroup" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
-                <option value="Hydration Bulk">Hydration Bulk</option>
-                <option value="Potassium Base">Potassium Base</option>
-                <option value="Cruciferous Nrf2">Cruciferous Nrf2</option>
-                <option value="Leafy Vanguard">Leafy Vanguard</option>
-                <option value="Flavor Balancer">Flavor Balancer</option>
-                <option value="Glucose Clamp">Glucose Clamp</option>
-                <option value="Aromatic Tonic">Aromatic Tonic</option>
+              <label class="text-[10px] text-slate-400 font-medium">Vegetable Group</label>
+              <select id="rsIngGroup" onchange="updateItemOptions()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                <option value="Hydration Bulk">Group 1: Hydration Bulk</option>
+                <option value="Leafy Vanguard">Group 2 & 5: Leafy Vanguard</option>
+                <option value="Cruciferous Nrf2">Group 3: Cruciferous Nrf2</option>
+                <option value="Glucose Clamp">Group 4: Glucose Clamp</option>
+                <option value="Flavor Balancer">Group 6 & 7: Fruit Acids & Flavor</option>
               </select>
             </div>
+
+            <!-- Item Dropdown (Auto-populated with 10 common items + Custom) -->
             <div class="sm:col-span-3">
-              <label class="text-[10px] text-slate-400">Item Name</label>
-              <input type="text" id="rsIngName" placeholder="e.g. Broccoli Stalks" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+              <label class="text-[10px] text-slate-400 font-medium">Vegetable / Fruit</label>
+              <select id="rsIngSelect" onchange="checkCustomOption()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white">
+                <!-- Injected via JavaScript -->
+              </select>
+              <input type="text" id="rsIngCustomName" placeholder="Type custom name" class="hidden mt-1 w-full bg-slate-950 border border-amber-500 rounded-lg px-2 py-1 text-xs text-amber-300 focus:outline-none" />
             </div>
+
+            <!-- Grams Input -->
             <div class="sm:col-span-2">
-              <label class="text-[10px] text-slate-400">Grams</label>
+              <label class="text-[10px] text-slate-400 font-medium">Grams</label>
               <input type="number" id="rsIngQty" placeholder="340" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
             </div>
+
+            <!-- Notes & Add Button -->
             <div class="sm:col-span-4 flex gap-1">
               <div class="flex-1">
-                <label class="text-[10px] text-slate-400">Notes (Optional)</label>
+                <label class="text-[10px] text-slate-400 font-medium">Notes (Optional)</label>
                 <input type="text" id="rsIngNotes" placeholder="e.g. 4 stalks" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
               </div>
-              <button type="button" onclick="rsAddIngredient()" class="mt-4 px-3 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-emerald-400 rounded-lg text-xs font-bold">+</button>
+              <button type="button" onclick="rsAddIngredient()" class="mt-4 px-3 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-emerald-400 rounded-lg text-xs font-bold cursor-pointer">+</button>
             </div>
           </div>
 
@@ -282,11 +290,61 @@
   </div>
 
   <script>
-    // Register Service Worker for PWA
+    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration:', err));
       });
+    }
+
+    // Taxonomy of Common Vegetables for Each Functional Category
+    const VEG_TAXONOMY = {
+      "Hydration Bulk": [
+        "Cucumber", "Zucchini", "Ash Gourd", "Bottle Gourd (Lauki)", "Celery Stalks",
+        "Yellow Summer Squash", "Chayote Squash", "Romaine Lettuce Hearts", "Ridge Gourd", "Watermelon Rind", "Custom"
+      ],
+      "Leafy Vanguard": [
+        "Flat-Leaf Parsley", "Cilantro", "Red Chard", "Baby Kale", "Arugula",
+        "Fresh Mint Leaves", "Baby Spinach", "Dandelion Greens", "Fresh Wheatgrass", "Sweet Basil", "Custom"
+      ],
+      "Cruciferous Nrf2": [
+        "Broccoli Stalks", "Broccoli Florets", "Brussels Sprouts", "Collard Greens", "Red Cabbage",
+        "Green Cabbage", "Cauliflower Stalks", "Baby Bok Choy", "Watercress", "Daikon Radish", "Custom"
+      ],
+      "Glucose Clamp": [
+        "Bitter Gourd (Karela)", "Cactus Strips (Nopal)", "Fenugreek Leaves (Methi)", "Fenugreek Sprouts",
+        "Artichoke Hearts", "Belgian Endive", "Chicory Greens", "Mustard Greens", "Radicchio", "Custom"
+      ],
+      "Flavor Balancer": [
+        "Green Apple (Granny Smith)", "Lemon (Peeled)", "Lime (Peeled)", "Fresh Ginger Root",
+        "Fresh Turmeric Root", "Carrots", "Kumquats", "Fresh Beetroot", "Bosc Pear", "Orange (Peeled)", "Custom"
+      ]
+    };
+
+    // Populate Item Selector dynamically based on chosen Group
+    function updateItemOptions() {
+      const grp = document.getElementById('rsIngGroup').value;
+      const itemSelect = document.getElementById('rsIngSelect');
+      const items = VEG_TAXONOMY[grp] || [];
+      
+      itemSelect.innerHTML = items.map(item => {
+        return `<option value="${item}">${item === 'Custom' ? '✏️ Custom (Type Name)' : item}</option>`;
+      }).join('');
+      
+      checkCustomOption();
+    }
+
+    // Show/hide the text input if "Custom" is chosen
+    function checkCustomOption() {
+      const itemSelect = document.getElementById('rsIngSelect');
+      const customInput = document.getElementById('rsIngCustomName');
+      if (itemSelect.value === 'Custom') {
+        customInput.classList.remove('hidden');
+        customInput.focus();
+      } else {
+        customInput.classList.add('hidden');
+        customInput.value = '';
+      }
     }
 
     // Fixed daily supplements added to every single portion
@@ -332,19 +390,23 @@
       setTimeout(() => b.classList.add('hidden'), 5000);
     }
 
-    // Recipe Studio Form Handling
+    // Add ingredient from the dynamic selector
     function rsAddIngredient() {
       const grp = document.getElementById('rsIngGroup').value;
-      const name = document.getElementById('rsIngName').value.trim();
+      const selectVal = document.getElementById('rsIngSelect').value;
+      const customVal = document.getElementById('rsIngCustomName').value.trim();
+      
+      const finalName = (selectVal === 'Custom') ? customVal : selectVal;
       const qty = Number(document.getElementById('rsIngQty').value);
       const notes = document.getElementById('rsIngNotes').value.trim();
 
-      if(!name || !qty) return alert("Enter item name and grams.");
+      if (!finalName || !qty) return alert("Select or enter a vegetable name and enter grams.");
       
-      studioIngredients.push({ id: Date.now(), group: grp, item: name, qty: qty, unit: "g", notes: notes });
-      document.getElementById('rsIngName').value = "";
+      studioIngredients.push({ id: Date.now(), group: grp, item: finalName, qty: qty, unit: "g", notes: notes });
       document.getElementById('rsIngQty').value = "";
       document.getElementById('rsIngNotes').value = "";
+      if (selectVal === 'Custom') document.getElementById('rsIngCustomName').value = "";
+      
       rsRenderIngredients();
     }
 
@@ -393,7 +455,7 @@
       rsRenderIngredients();
     }
 
-    // Gemini Flash AI Call (Works with both AQ... and AIzaSy... keys)
+    // Gemini Flash AI Call
     async function computeWithGemini() {
       const apiKey = (document.getElementById('cfgApiKey').value || '').trim();
       if(!apiKey) {
@@ -687,6 +749,9 @@ Return ONLY valid JSON:
     document.getElementById('currentWeight').addEventListener('change', e => safeStorage('jdb_last_weight', e.target.value.trim()));
 
     document.getElementById('batchExtractionDate').value = new Date().toISOString().split('T')[0];
+
+    // Initialize Dropdowns
+    updateItemOptions();
 
     // Auto-fetch database recipes on initial load
     if(document.getElementById('cfgScriptUrl').value) {
