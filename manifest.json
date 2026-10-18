@@ -1,20 +1,17 @@
 {
-  "name": "Juicing & Batch Hub",
+  "name": "Juicing Recipe & Daily Batch Hub",
   "short_name": "JuiceHub",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2405/2405470.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2405/2405470.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23020617'/><path d='M160 96h192v48l-32 48v80l96 112c16 19 2 48-23 48H119c-25 0-39-29-23-48l96-112v-80l-32-48V96z' fill='none' stroke='%2310b981' stroke-width='32' stroke-linecap='round' stroke-linejoin='round'/><path d='M160 352h192' stroke='%2310b981' stroke-width='24' stroke-linecap='round'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
