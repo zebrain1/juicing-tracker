@@ -22,7 +22,7 @@
     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
       <div>
         <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-400 font-mono text-[10px] font-bold tracking-wide">PWA v3.0</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-400 font-mono text-[10px] font-bold tracking-wide">PWA v3.1</span>
           <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
@@ -30,7 +30,7 @@
             Juicing Recipe & Daily Batch Hub
           </h1>
         </div>
-        <p class="text-slate-400 text-xs mt-1">Multi-row relational database, full nutrient tracking, and Sheets sync.</p>
+        <p class="text-slate-400 text-xs mt-1">Multi-row relational database, % Daily Requirements, and Google Sheets sync.</p>
       </div>
 
       <div class="flex items-center gap-2">
@@ -39,7 +39,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
           </svg>
-          API Settings
+          Settings
         </button>
       </div>
     </header>
@@ -101,7 +101,7 @@
             </div>
             <div>
               <label class="text-[11px] text-slate-400 block mb-1">Extraction Date</label>
-              <input type="date" id="batchExtractionDate" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none" />
+              <input type="date" id="batchExtractionDate" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-100 focus:outline-none" />
             </div>
           </div>
           
@@ -115,7 +115,7 @@
           </div>
         </div>
 
-        <!-- Step 2: Consolidated Payload Matrix -->
+        <!-- Step 2: Consolidated Payload Matrix (Displays Raw Quantities + % Daily Requirements) -->
         <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
@@ -285,7 +285,7 @@
             <div class="sm:col-span-2 flex gap-1">
               <div class="flex-1">
                 <label class="text-[10px] text-slate-400 font-medium">Notes</label>
-                <input type="text" id="rsIngNotes" placeholder="Optional" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white" />
+                <input type="text" id="rsIngNotes" placeholder="Optional" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white" />
               </div>
               <button type="button" onclick="rsAddIngredient()" class="mt-4 px-3 bg-emerald-700 hover:bg-emerald-600 border border-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer transition" title="Add to Staging Area">+</button>
             </div>
@@ -315,34 +315,42 @@
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Vit K1</div>
                 <div class="text-xs font-bold text-emerald-400 font-mono" id="resK1">-- mcg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctK1">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Vit A (RAE)</div>
                 <div class="text-xs font-bold text-sky-400 font-mono" id="resA">-- mcg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctA">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Vit C</div>
                 <div class="text-xs font-bold text-amber-400 font-mono" id="resC">-- mg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctC">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Folate (B9)</div>
                 <div class="text-xs font-bold text-teal-400 font-mono" id="resB9">-- mcg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctB9">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Potassium</div>
                 <div class="text-xs font-bold text-indigo-400 font-mono" id="resK">-- mg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctK">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Magnesium</div>
                 <div class="text-xs font-bold text-slate-300 font-mono" id="resMg">-- mg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctMg">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Calcium</div>
                 <div class="text-xs font-bold text-orange-400 font-mono" id="resCa">-- mg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctCa">Portion: --</div>
               </div>
               <div class="p-2 bg-slate-950 border border-slate-800/80 rounded-lg">
                 <div class="text-[9px] text-slate-500 uppercase">Batch Iron</div>
                 <div class="text-xs font-bold text-rose-400 font-mono" id="resFe">-- mg</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="pctFe">Portion: --</div>
               </div>
             </div>
 
@@ -389,6 +397,20 @@
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration:', err));
       });
     }
+
+    // ==========================================
+    // OFFICIAL FDA DAILY VALUES (ADULTS)
+    // ==========================================
+    const DAILY_REQUIREMENTS_DV = {
+      k1: 120.0,    // mcg
+      a: 900.0,     // mcg RAE
+      c: 90.0,      // mg
+      b9: 400.0,    // mcg DFE
+      k: 4700.0,    // mg
+      mg: 420.0,    // mg
+      ca: 1300.0,   // mg
+      fe: 18.0      // mg
+    };
 
     // ==========================================
     // LOCAL USDA FOODDATA CENTRAL DATABASE
@@ -605,6 +627,16 @@
       document.getElementById('resMg').innerText = "-- mg";
       document.getElementById('resCa').innerText = "-- mg";
       document.getElementById('resFe').innerText = "-- mg";
+      
+      document.getElementById('pctK1').innerText = "Portion: --";
+      document.getElementById('pctA').innerText = "Portion: --";
+      document.getElementById('pctC').innerText = "Portion: --";
+      document.getElementById('pctB9').innerText = "Portion: --";
+      document.getElementById('pctK').innerText = "Portion: --";
+      document.getElementById('pctMg').innerText = "Portion: --";
+      document.getElementById('pctCa').innerText = "Portion: --";
+      document.getElementById('pctFe').innerText = "Portion: --";
+      
       document.getElementById('resYieldStatus').innerText = "Est. Yield: -- ml";
       document.getElementById('resPurpose').value = "";
       document.getElementById('resTaste').value = "";
@@ -635,7 +667,6 @@
 
       document.getElementById('btnUpdateIdBadge').innerText = r.Recipe_ID;
 
-      // Unpack normalized ingredients array
       studioIngredients = r.Ingredients || [];
       rsRenderIngredients();
 
@@ -832,6 +863,8 @@ Return STRICTLY valid JSON with these keys:
     }
 
     function renderComputedMatrix() {
+      const portionCount = Number(document.getElementById('rsPortions').value) || 4;
+
       document.getElementById('resK1').innerText = studioMatrix.Vit_K1_mcg + " mcg";
       document.getElementById('resA').innerText = studioMatrix.Vit_A_mcg + " mcg";
       document.getElementById('resC').innerText = studioMatrix.Vit_C_mg + " mg";
@@ -840,11 +873,30 @@ Return STRICTLY valid JSON with these keys:
       document.getElementById('resMg').innerText = studioMatrix.Magnesium_mg + " mg";
       document.getElementById('resCa').innerText = studioMatrix.Calcium_mg + " mg";
       document.getElementById('resFe').innerText = studioMatrix.Iron_mg + " mg";
+
+      // Render portion quantities & % DV inside cards
+      const pK1 = (studioMatrix.Vit_K1_mcg / portionCount);
+      const pA = (studioMatrix.Vit_A_mcg / portionCount);
+      const pC = (studioMatrix.Vit_C_mg / portionCount);
+      const pB9 = (studioMatrix.Folate_B9_mcg / portionCount);
+      const pK = (studioMatrix.Potassium_mg / portionCount);
+      const pMg = (studioMatrix.Magnesium_mg / portionCount);
+      const pCa = (studioMatrix.Calcium_mg / portionCount);
+      const pFe = (studioMatrix.Iron_mg / portionCount);
+
+      document.getElementById('pctK1').innerText = `Daily (1/${portionCount}): ${pK1.toFixed(1)} mcg (${((pK1/DAILY_REQUIREMENTS_DV.k1)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctA').innerText = `Daily (1/${portionCount}): ${pA.toFixed(1)} mcg (${((pA/DAILY_REQUIREMENTS_DV.a)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctC').innerText = `Daily (1/${portionCount}): ${pC.toFixed(1)} mg (${((pC/DAILY_REQUIREMENTS_DV.c)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctB9').innerText = `Daily (1/${portionCount}): ${pB9.toFixed(1)} mcg (${((pB9/DAILY_REQUIREMENTS_DV.b9)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctK').innerText = `Daily (1/${portionCount}): ${pK.toFixed(1)} mg (${((pK/DAILY_REQUIREMENTS_DV.k)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctMg').innerText = `Daily (1/${portionCount}): ${pMg.toFixed(1)} mg (${((pMg/DAILY_REQUIREMENTS_DV.mg)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctCa').innerText = `Daily (1/${portionCount}): ${pCa.toFixed(1)} mg (${((pCa/DAILY_REQUIREMENTS_DV.ca)*100).toFixed(0)}% DV)`;
+      document.getElementById('pctFe').innerText = `Daily (1/${portionCount}): ${pFe.toFixed(1)} mg (${((pFe/DAILY_REQUIREMENTS_DV.fe)*100).toFixed(0)}% DV)`;
+
       document.getElementById('resYieldStatus').innerText = `Est. Yield: ${studioMatrix.Estimated_Yield_ml} ml`;
       document.getElementById('resPurpose').value = studioMatrix.Biological_Purpose;
       document.getElementById('resTaste').value = studioMatrix.Taste_Notes;
 
-      // Enable Save as New
       document.getElementById('btnSaveNewDB').classList.remove('opacity-50', 'cursor-not-allowed');
       document.getElementById('btnSaveNewDB').disabled = false;
     }
@@ -916,20 +968,32 @@ Return STRICTLY valid JSON with these keys:
       }
     }
 
-    // BUTTON 1: Save as New Recipe (Appends New Line in DB with fresh ID)
+    // BUTTON 1: Save as New Recipe
     function saveRecipeToDB() {
       const name = document.getElementById('rsName').value.trim();
       if (!name || !studioMatrix) return alert("Recipe name and calculated matrix are required.");
+      
+      const portionCount = Number(document.getElementById('rsPortions').value) || 4;
       
       const payload = {
         action: "save_recipe",
         recipe: {
           Recipe_Name: name,
           Batch_Yield_ml: document.getElementById('rsYield').value,
-          Portions_Days: document.getElementById('rsPortions').value,
-          Portion_Size_ml: document.getElementById('rsYield').value / document.getElementById('rsPortions').value,
+          Portions_Days: portionCount,
+          Portion_Size_ml: document.getElementById('rsYield').value / portionCount,
           Ingredients: studioIngredients,
-          Totals: studioMatrix
+          Totals: studioMatrix,
+          Portion_Pct: {
+            k1: (((studioMatrix.Vit_K1_mcg / portionCount) / DAILY_REQUIREMENTS_DV.k1) * 100).toFixed(1) + "%",
+            a: (((studioMatrix.Vit_A_mcg / portionCount) / DAILY_REQUIREMENTS_DV.a) * 100).toFixed(1) + "%",
+            c: (((studioMatrix.Vit_C_mg / portionCount) / DAILY_REQUIREMENTS_DV.c) * 100).toFixed(1) + "%",
+            b9: (((studioMatrix.Folate_B9_mcg / portionCount) / DAILY_REQUIREMENTS_DV.b9) * 100).toFixed(1) + "%",
+            k: (((studioMatrix.Potassium_mg / portionCount) / DAILY_REQUIREMENTS_DV.k) * 100).toFixed(1) + "%",
+            mg: (((studioMatrix.Magnesium_mg / portionCount) / DAILY_REQUIREMENTS_DV.mg) * 100).toFixed(1) + "%",
+            ca: (((studioMatrix.Calcium_mg / portionCount) / DAILY_REQUIREMENTS_DV.ca) * 100).toFixed(1) + "%",
+            fe: (((studioMatrix.Iron_mg / portionCount) / DAILY_REQUIREMENTS_DV.fe) * 100).toFixed(1) + "%"
+          }
         }
       };
       pushToDB(payload);
@@ -941,16 +1005,28 @@ Return STRICTLY valid JSON with these keys:
       const name = document.getElementById('rsName').value.trim();
       if (!id || !name || !studioMatrix) return alert("Please load a recipe first to overwrite it.");
       
+      const portionCount = Number(document.getElementById('rsPortions').value) || 4;
+
       const payload = {
         action: "update_recipe",
         recipe: {
           Recipe_ID: id,
           Recipe_Name: name,
           Batch_Yield_ml: document.getElementById('rsYield').value,
-          Portions_Days: document.getElementById('rsPortions').value,
-          Portion_Size_ml: document.getElementById('rsYield').value / document.getElementById('rsPortions').value,
+          Portions_Days: portionCount,
+          Portion_Size_ml: document.getElementById('rsYield').value / portionCount,
           Ingredients: studioIngredients,
-          Totals: studioMatrix
+          Totals: studioMatrix,
+          Portion_Pct: {
+            k1: (((studioMatrix.Vit_K1_mcg / portionCount) / DAILY_REQUIREMENTS_DV.k1) * 100).toFixed(1) + "%",
+            a: (((studioMatrix.Vit_A_mcg / portionCount) / DAILY_REQUIREMENTS_DV.a) * 100).toFixed(1) + "%",
+            c: (((studioMatrix.Vit_C_mg / portionCount) / DAILY_REQUIREMENTS_DV.c) * 100).toFixed(1) + "%",
+            b9: (((studioMatrix.Folate_B9_mcg / portionCount) / DAILY_REQUIREMENTS_DV.b9) * 100).toFixed(1) + "%",
+            k: (((studioMatrix.Potassium_mg / portionCount) / DAILY_REQUIREMENTS_DV.k) * 100).toFixed(1) + "%",
+            mg: (((studioMatrix.Magnesium_mg / portionCount) / DAILY_REQUIREMENTS_DV.mg) * 100).toFixed(1) + "%",
+            ca: (((studioMatrix.Calcium_mg / portionCount) / DAILY_REQUIREMENTS_DV.ca) * 100).toFixed(1) + "%",
+            fe: (((studioMatrix.Iron_mg / portionCount) / DAILY_REQUIREMENTS_DV.fe) * 100).toFixed(1) + "%"
+          }
         }
       };
       pushToDB(payload);
@@ -1027,6 +1103,16 @@ Return STRICTLY valid JSON with these keys:
       const tCa = jCa + FIXED_SUPPLEMENTS.shot.ca + FIXED_SUPPLEMENTS.multi.ca + FIXED_SUPPLEMENTS.turm.ca;
       const tFe = jFe + FIXED_SUPPLEMENTS.shot.fe + FIXED_SUPPLEMENTS.multi.fe + FIXED_SUPPLEMENTS.turm.fe;
 
+      // Percentages of Daily Requirement (% DV)
+      const pK = ((tK / DAILY_REQUIREMENTS_DV.k1) * 100).toFixed(1);
+      const pA = ((tA / DAILY_REQUIREMENTS_DV.a) * 100).toFixed(1);
+      const pC = ((tC / DAILY_REQUIREMENTS_DV.c) * 100).toFixed(1);
+      const pB9 = ((tB9 / DAILY_REQUIREMENTS_DV.b9) * 100).toFixed(1);
+      const pPot = ((tPot / DAILY_REQUIREMENTS_DV.k) * 100).toFixed(1);
+      const pMg = ((tMg / DAILY_REQUIREMENTS_DV.mg) * 100).toFixed(1);
+      const pCa = ((tCa / DAILY_REQUIREMENTS_DV.ca) * 100).toFixed(1);
+      const pFe = ((tFe / DAILY_REQUIREMENTS_DV.fe) * 100).toFixed(1);
+
       tbodyMatrix.innerHTML = `
         <tr>
           <td class="py-2 px-1.5 font-sans font-medium text-slate-200">1. Raw Juice (${r.Portion_Size_ml}ml)</td>
@@ -1083,11 +1169,37 @@ Return STRICTLY valid JSON with these keys:
           <td class="py-2 px-1.5 text-orange-300">${tCa.toFixed(1)}</td>
           <td class="py-2 px-1.5 text-rose-300">${tFe.toFixed(1)}</td>
         </tr>
+        <tr class="bg-emerald-950/40 font-bold border-t border-emerald-800/60 text-emerald-400">
+          <td class="py-2 px-1.5 font-sans">% DAILY REQUIREMENT (DV)</td>
+          <td class="py-2 px-1.5">${pK}%</td>
+          <td class="py-2 px-1.5">${pA}%</td>
+          <td class="py-2 px-1.5">${pC}%</td>
+          <td class="py-2 px-1.5">${pB9}%</td>
+          <td class="py-2 px-1.5">${pPot}%</td>
+          <td class="py-2 px-1.5">${pMg}%</td>
+          <td class="py-2 px-1.5">${pCa}%</td>
+          <td class="py-2 px-1.5">${pFe}%</td>
+        </tr>
       `;
 
       const activeWeight = document.getElementById('currentWeight').value || "";
       const startDateStr = document.getElementById('batchExtractionDate').value || new Date().toISOString().split('T')[0];
       const baseDate = new Date(startDateStr + 'T00:00:00');
+
+      // Helper function to build stream object with both quantity and %
+      const mkStream = (src, isTot, k1, a, c, b9, pot, mg, ca, fe) => ({
+        source: src, isTotal: isTot,
+        vit_k1: k1.toFixed(1), vit_a: a.toFixed(1), vit_c: c.toFixed(1), folate_b9: b9.toFixed(1),
+        potassium: pot.toFixed(1), magnesium: mg.toFixed(1), calcium: ca.toFixed(1), iron: fe.toFixed(1),
+        pct_k1: ((k1 / DAILY_REQUIREMENTS_DV.k1) * 100).toFixed(1) + "%",
+        pct_a: ((a / DAILY_REQUIREMENTS_DV.a) * 100).toFixed(1) + "%",
+        pct_c: ((c / DAILY_REQUIREMENTS_DV.c) * 100).toFixed(1) + "%",
+        pct_b9: ((b9 / DAILY_REQUIREMENTS_DV.b9) * 100).toFixed(1) + "%",
+        pct_potassium: ((pot / DAILY_REQUIREMENTS_DV.k) * 100).toFixed(1) + "%",
+        pct_magnesium: ((mg / DAILY_REQUIREMENTS_DV.mg) * 100).toFixed(1) + "%",
+        pct_calcium: ((ca / DAILY_REQUIREMENTS_DV.ca) * 100).toFixed(1) + "%",
+        pct_iron: ((fe / DAILY_REQUIREMENTS_DV.fe) * 100).toFixed(1) + "%"
+      });
 
       // Build payload for all days with 4 delivery streams + 1 grand daily total
       activeBatchPayload = [];
@@ -1101,18 +1213,18 @@ Return STRICTLY valid JSON with these keys:
           recipe_used: r.Recipe_Name,
           weight_lbs: activeWeight,
           streams: [
-            { source: `1. Raw Juice (${r.Portion_Size_ml}ml)`, isTotal: false, vit_k1: jK.toFixed(1), vit_a: jA.toFixed(1), vit_c: jC.toFixed(1), folate_b9: jB9.toFixed(1), potassium: jPot.toFixed(1), magnesium: jMg.toFixed(1), calcium: jCa.toFixed(1), iron: jFe.toFixed(1) },
-            { source: "2. Medicine Shot", isTotal: false, vit_k1: FIXED_SUPPLEMENTS.shot.k1.toFixed(1), vit_a: FIXED_SUPPLEMENTS.shot.a.toFixed(1), vit_c: FIXED_SUPPLEMENTS.shot.c.toFixed(1), folate_b9: FIXED_SUPPLEMENTS.shot.b9.toFixed(1), potassium: FIXED_SUPPLEMENTS.shot.k.toFixed(1), magnesium: FIXED_SUPPLEMENTS.shot.mg.toFixed(1), calcium: FIXED_SUPPLEMENTS.shot.ca.toFixed(1), iron: FIXED_SUPPLEMENTS.shot.fe.toFixed(1) },
-            { source: "3. Kirkland Multi", isTotal: false, vit_k1: FIXED_SUPPLEMENTS.multi.k1.toFixed(1), vit_a: FIXED_SUPPLEMENTS.multi.a.toFixed(1), vit_c: FIXED_SUPPLEMENTS.multi.c.toFixed(1), folate_b9: FIXED_SUPPLEMENTS.multi.b9.toFixed(1), potassium: FIXED_SUPPLEMENTS.multi.k.toFixed(1), magnesium: FIXED_SUPPLEMENTS.multi.mg.toFixed(1), calcium: FIXED_SUPPLEMENTS.multi.ca.toFixed(1), iron: FIXED_SUPPLEMENTS.multi.fe.toFixed(1) },
-            { source: "4. Turmeric Cap", isTotal: false, vit_k1: FIXED_SUPPLEMENTS.turm.k1.toFixed(1), vit_a: FIXED_SUPPLEMENTS.turm.a.toFixed(1), vit_c: FIXED_SUPPLEMENTS.turm.c.toFixed(1), folate_b9: FIXED_SUPPLEMENTS.turm.b9.toFixed(1), potassium: FIXED_SUPPLEMENTS.turm.k.toFixed(1), magnesium: FIXED_SUPPLEMENTS.turm.mg.toFixed(1), calcium: FIXED_SUPPLEMENTS.turm.ca.toFixed(1), iron: FIXED_SUPPLEMENTS.turm.fe.toFixed(1) },
-            { source: "GRAND DAILY TOTAL", isTotal: true, vit_k1: tK.toFixed(1), vit_a: tA.toFixed(1), vit_c: tC.toFixed(1), folate_b9: tB9.toFixed(1), potassium: tPot.toFixed(1), magnesium: tMg.toFixed(1), calcium: tCa.toFixed(1), iron: tFe.toFixed(1) }
+            mkStream(`1. Raw Juice (${r.Portion_Size_ml}ml)`, false, jK, jA, jC, jB9, jPot, jMg, jCa, jFe),
+            mkStream("2. Medicine Shot", false, FIXED_SUPPLEMENTS.shot.k1, FIXED_SUPPLEMENTS.shot.a, FIXED_SUPPLEMENTS.shot.c, FIXED_SUPPLEMENTS.shot.b9, FIXED_SUPPLEMENTS.shot.k, FIXED_SUPPLEMENTS.shot.mg, FIXED_SUPPLEMENTS.shot.ca, FIXED_SUPPLEMENTS.shot.fe),
+            mkStream("3. Kirkland Multi", false, FIXED_SUPPLEMENTS.multi.k1, FIXED_SUPPLEMENTS.multi.a, FIXED_SUPPLEMENTS.multi.c, FIXED_SUPPLEMENTS.multi.b9, FIXED_SUPPLEMENTS.multi.k, FIXED_SUPPLEMENTS.multi.mg, FIXED_SUPPLEMENTS.multi.ca, FIXED_SUPPLEMENTS.multi.fe),
+            mkStream("4. Turmeric Cap", false, FIXED_SUPPLEMENTS.turm.k1, FIXED_SUPPLEMENTS.turm.a, FIXED_SUPPLEMENTS.turm.c, FIXED_SUPPLEMENTS.turm.b9, FIXED_SUPPLEMENTS.turm.k, FIXED_SUPPLEMENTS.turm.mg, FIXED_SUPPLEMENTS.turm.ca, FIXED_SUPPLEMENTS.turm.fe),
+            mkStream("GRAND DAILY TOTAL", true, tK, tA, tC, tB9, tPot, tMg, tCa, tFe)
           ]
         });
       }
 
       btn.classList.remove('opacity-50', 'cursor-not-allowed');
       btn.disabled = false;
-      btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Confirm Batch N+1 (Pushes ${portionCount} Days)`;
+      btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Confirm Batch N+1 (Pushes 4 Days)`;
     }
 
     function deployBatchToDrive() {
