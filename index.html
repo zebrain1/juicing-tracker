@@ -22,7 +22,7 @@
     <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
       <div>
         <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-400 font-mono text-[10px] font-bold tracking-wide">PWA v2.3</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700/60 text-emerald-400 font-mono text-[10px] font-bold tracking-wide">PWA v2.5</span>
           <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
@@ -55,12 +55,12 @@
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="text-[11px] font-medium text-slate-300">Gemini Flash API Key (AQ... or AIzaSy...)</label>
+          <label class="text-[11px] font-medium text-slate-300">Gemini API Key (Optional AI Enhancement)</label>
           <input type="password" id="cfgApiKey" placeholder="Paste your API key here" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-amber-400" />
         </div>
         <div>
           <label class="text-[11px] font-medium text-slate-300">Google Apps Script Webhook URL</label>
-          <input type="text" id="cfgScriptUrl" value="https://script.google.com/macros/s/1Vb14IbNknP0MBn1JwK9FxbE66PVgjUH0iAW4h0MlzDmBADWYA-MzExS0/exec" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500" />
+          <input type="text" id="cfgScriptUrl" placeholder="Must begin with https://script.google.com/macros/s/AKfycb..." class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 font-mono" />
         </div>
       </div>
     </div>
@@ -245,7 +245,7 @@
             </div>
           </div>
 
-          <!-- Staged Ingredients Table -->
+          <!-- Staged Ingredients -->
           <div class="border border-slate-800 rounded-xl overflow-hidden">
             <div class="bg-slate-950/80 px-3 py-1.5 text-[10px] font-semibold text-slate-400 uppercase flex justify-between">
               <span>Staged Ingredients for this Batch</span>
@@ -400,7 +400,7 @@
         "Fresh Mint Leaves", "Baby Spinach", "Dandelion Greens", "Fresh Wheatgrass", "Sweet Basil", "Custom"
       ],
       "Cruciferous Nrf2": [
-        "Broccoli Stalks", "Broccoli Floreets", "Brussels Sprouts", "Collard Greens", "Red Cabbage",
+        "Broccoli Stalks", "Broccoli Florets", "Brussels Sprouts", "Collard Greens", "Red Cabbage",
         "Green Cabbage", "Cauliflower Stalks", "Baby Bok Choy", "Watercress", "Daikon Radish", "Custom"
       ],
       "Glucose Clamp": [
@@ -647,7 +647,7 @@ Return STRICTLY valid JSON with these keys:
   "Taste_Notes": "string"
 }`;
 
-        // Dynamic discovery algorithm matching the meal tracker
+        // Discover supported models directly from Google AI Studio
         let modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
         try {
           const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
@@ -745,15 +745,15 @@ Return STRICTLY valid JSON with these keys:
 
     // Google Sheets Communication
     async function fetchRecipesFromDB() {
-      const url = document.getElementById('cfgScriptUrl').value;
-      if(!url || !url.includes("script.google.com")) return;
+      const url = (document.getElementById('cfgScriptUrl').value || '').trim();
+      if (!url || !url.includes("script.google.com")) return;
       
       document.getElementById('activeRecipeSelect').innerHTML = '<option>Connecting to Google Drive...</option>';
       
       try {
         const res = await fetch(url);
         const json = await res.json();
-        if(json.status === "success") {
+        if (json.status === "success") {
           dbRecipes = json.data;
           populateDropdown();
           showBanner(`Loaded ${dbRecipes.length} recipes from Database.`);
@@ -772,8 +772,10 @@ Return STRICTLY valid JSON with these keys:
     }
 
     async function pushToDB(actionPayload) {
-      const url = document.getElementById('cfgScriptUrl').value;
-      if(!url) return alert("Google Apps Script Webhook URL is missing.");
+      const url = (document.getElementById('cfgScriptUrl').value || '').trim();
+      if (!url || !url.includes("script.google.com/macros/s/")) {
+        return alert("Please enter a valid Google Apps Script Web App URL (starts with https://script.google.com/macros/s/AKfycb...) in Settings.");
+      }
       
       try {
         await fetch(url, {
@@ -784,7 +786,7 @@ Return STRICTLY valid JSON with these keys:
         });
         
         setTimeout(() => {
-          if(actionPayload.action === "log_batch") {
+          if (actionPayload.action === "log_batch") {
              showBanner("Batch logged successfully to Daily_Batch_Log tab!");
              document.getElementById('btnLogBatch').innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Confirm Batch N+1 (Pushes to Drive)`;
              document.getElementById('btnLogBatch').disabled = false;
@@ -802,7 +804,7 @@ Return STRICTLY valid JSON with these keys:
 
     function saveRecipeToDB() {
       const name = document.getElementById('rsName').value.trim();
-      if(!name || !studioMatrix) return alert("Recipe name and calculated matrix are required.");
+      if (!name || !studioMatrix) return alert("Recipe name and calculated matrix are required.");
       
       const payload = {
         action: "save_recipe",
@@ -814,8 +816,11 @@ Return STRICTLY valid JSON with these keys:
           Vit_K1_mcg: studioMatrix.Vit_K1_mcg,
           Vit_A_mcg: studioMatrix.Vit_A_mcg,
           Vit_C_mg: studioMatrix.Vit_C_mg,
+          Folate_B9_mcg: studioMatrix.Folate_B9_mcg,
           Potassium_mg: studioMatrix.Potassium_mg,
           Magnesium_mg: studioMatrix.Magnesium_mg,
+          Calcium_mg: studioMatrix.Calcium_mg,
+          Iron_mg: studioMatrix.Iron_mg,
           Biological_Purpose: studioMatrix.Biological_Purpose,
           Taste_Notes: studioMatrix.Taste_Notes
         }
@@ -830,7 +835,7 @@ Return STRICTLY valid JSON with these keys:
       const tbody = document.getElementById('batchMatrixBody');
       const btn = document.getElementById('btnLogBatch');
       
-      if(!r) {
+      if (!r) {
         tbody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-slate-500 italic font-sans">Select a recipe to view matrix...</td></tr>';
         btn.classList.add('opacity-50', 'cursor-not-allowed');
         btn.disabled = true;
@@ -843,11 +848,11 @@ Return STRICTLY valid JSON with these keys:
       const jK = Number(r.Vit_K1_mcg) / portionCount;
       const jA = Number(r.Vit_A_mcg) / portionCount;
       const jC = Number(r.Vit_C_mg) / portionCount;
-      const jB9 = 181.9;
+      const jB9 = Number(r.Folate_B9_mcg || 180) / portionCount;
       const jPot = Number(r.Potassium_mg) / portionCount;
       const jMg = Number(r.Magnesium_mg) / portionCount;
-      const jCa = 85.0;
-      const jFe = 2.4;
+      const jCa = Number(r.Calcium_mg || 80) / portionCount;
+      const jFe = Number(r.Iron_mg || 2.4) / portionCount;
 
       const tK = jK + FIXED_SUPPLEMENTS.shot.k1 + FIXED_SUPPLEMENTS.multi.k1 + FIXED_SUPPLEMENTS.turm.k1;
       const tA = jA + FIXED_SUPPLEMENTS.shot.a + FIXED_SUPPLEMENTS.multi.a + FIXED_SUPPLEMENTS.turm.a;
@@ -921,7 +926,7 @@ Return STRICTLY valid JSON with these keys:
       const baseDate = new Date(startDateStr + 'T00:00:00');
 
       activeBatchRows = [];
-      for(let i=0; i<portionCount; i++) {
+      for (let i = 0; i < portionCount; i++) {
          const d = new Date(baseDate);
          d.setDate(baseDate.getDate() + i);
          activeBatchRows.push({
@@ -933,8 +938,11 @@ Return STRICTLY valid JSON with these keys:
            vit_k1: tK.toFixed(1),
            vit_a: tA.toFixed(1),
            vit_c: tC.toFixed(1),
+           folate_b9: tB9.toFixed(1),
            potassium: tPot.toFixed(1),
            magnesium: tMg.toFixed(1),
+           calcium: tCa.toFixed(1),
+           iron: tFe.toFixed(1),
            supplements: "Shot + Multi + Turmeric"
          });
       }
@@ -945,10 +953,10 @@ Return STRICTLY valid JSON with these keys:
     }
 
     function deployBatchToDrive() {
-      if(activeBatchRows.length === 0) return;
+      if (activeBatchRows.length === 0) return;
       
       const weight = document.getElementById('currentWeight').value;
-      if(!weight) return alert("Please enter your current weight (lbs) before confirming.");
+      if (!weight) return alert("Please enter your current weight (lbs) before confirming.");
       
       safeStorage('jdb_last_weight', weight);
       activeBatchRows.forEach(r => r.weight_lbs = weight);
@@ -967,7 +975,7 @@ Return STRICTLY valid JSON with these keys:
     document.getElementById('cfgApiKey').value = safeStorage('jdb_gemini_key');
     document.getElementById('cfgApiKey').addEventListener('change', e => safeStorage('jdb_gemini_key', e.target.value.trim()));
     
-    document.getElementById('cfgScriptUrl').value = safeStorage('jdb_script_url') || document.getElementById('cfgScriptUrl').value;
+    document.getElementById('cfgScriptUrl').value = safeStorage('jdb_script_url') || "";
     document.getElementById('cfgScriptUrl').addEventListener('change', e => safeStorage('jdb_script_url', e.target.value.trim()));
 
     document.getElementById('currentWeight').value = safeStorage('jdb_last_weight');
@@ -977,7 +985,7 @@ Return STRICTLY valid JSON with these keys:
 
     updateItemOptions();
 
-    if(document.getElementById('cfgScriptUrl').value) {
+    if (document.getElementById('cfgScriptUrl').value) {
       fetchRecipesFromDB();
     }
   </script>
